@@ -12,6 +12,10 @@ class SnowflakeClient(object):
         res = requests.get(self.api_uri)
         return int(res.text)
 
+    def get_guids(self, num):
+        res = requests.get(self.api_uri + 'ids?num=' + str(num))
+        return json.loads(res.text)
+
     def get_stats(self):
         res = requests.get(self.api_uri + 'stats')
         return json.loads(res.text)
@@ -27,6 +31,10 @@ def setup(host, port):
 
 def get_guid():
     return default_client.get_guid()
+
+
+def get_guids(num):
+    return default_client.get_guids(num)
 
 
 def get_stats():

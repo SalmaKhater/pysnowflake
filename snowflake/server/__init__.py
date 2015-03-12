@@ -35,6 +35,17 @@ class IDHandler(tornado.web.RequestHandler):
         self.flush() # avoid ETag, etc generation
 
 
+class IDsHandler(tornado.web.RequestHandler):
+    def get(self):
+        num = self.get_argument('num', 0)
+        if num.isnumeric():
+            num = int(num)
+        generated_ids = [self.application.id_generator.get_next_id() for _ in range(num)]
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps(generated_ids))
+        self.flush() # avoid ETag, etc generation
+
+
 class StatsHandler(tornado.web.RequestHandler):
     def get(self):
         stats = self.application.id_generator.stats
@@ -47,6 +58,7 @@ class SnowflakeApplication(tornado.web.Application):
     def __init__(self, **settings):
         handlers = [
             (r'/', IDHandler),
+            (r'/ids', IDsHandler),
             (r'/stats', StatsHandler),
         ]
         settings = {
